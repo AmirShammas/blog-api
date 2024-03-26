@@ -39,10 +39,20 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     pagination_class = CustomPagination
 
+    """
     def get_queryset(self):
         author_id = self.request.query_params.get('author')
         if author_id:
             return Post.objects.filter(author_id=author_id)
+        return Post.objects.all()
+    """
+
+    def get_queryset(self):
+        author_username = self.request.query_params.get('author')
+        if author_username:
+            author = get_user_model().objects.filter(username=author_username).first()
+            if author:
+                return Post.objects.filter(author=author)
         return Post.objects.all()
 
 
