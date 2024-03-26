@@ -15,6 +15,6 @@ urlpatterns = [
 
 
 router = SimpleRouter()
-router.register("", PostViewSet, basename="posts")
 router.register("users", UserViewSet, basename="users")
+router.register("", PostViewSet, basename="posts")
 urlpatterns = router.urls
