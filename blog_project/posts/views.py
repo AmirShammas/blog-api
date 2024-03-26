@@ -35,9 +35,15 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView): # new
 
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
-    queryset = Post.objects.all()
+    # queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        author_id = self.request.query_params.get('author')
+        if author_id:
+            return Post.objects.filter(author_id=author_id)
+        return Post.objects.all()
 
 
 class UserViewSet(viewsets.ModelViewSet):
