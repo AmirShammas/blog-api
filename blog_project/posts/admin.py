@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Comment, Post
+from .models import Category, Comment, Post
 from django.contrib.admin import register
 
 # admin.site.register(Post)
@@ -17,7 +17,7 @@ def inactivate_selected_items(modeladmin, request, queryset):
 
 @register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "author", "is_active",)
+    list_display = ("id", "title", "author", "category", "is_active",)
     list_editable = ("is_active",)
     actions = (activate_selected_items, inactivate_selected_items)
 
@@ -25,5 +25,12 @@ class PostAdmin(admin.ModelAdmin):
 @register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "author", "post", "is_active",)
+    list_editable = ("is_active",)
+    actions = (activate_selected_items, inactivate_selected_items)
+
+
+@register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "is_active",)
     list_editable = ("is_active",)
     actions = (activate_selected_items, inactivate_selected_items)

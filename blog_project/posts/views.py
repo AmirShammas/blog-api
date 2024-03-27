@@ -1,6 +1,6 @@
 # from rest_framework import generics, permissions
-from .models import Comment, Post
-from .serializers import CommentCreateSerializer, CommentSerializer, CommentUpdateSerializer, PostCreateSerializer, PostSerializer, PostUpdateSerializer, UserSerializer
+from .models import Category, Comment, Post
+from .serializers import CategoryCreateSerializer, CategorySerializer, CategoryUpdateSerializer, CommentCreateSerializer, CommentSerializer, CommentUpdateSerializer, PostCreateSerializer, PostSerializer, PostUpdateSerializer, UserSerializer
 from .permissions import IsAuthorOrReadOnly
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
@@ -33,6 +33,22 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView): # new
 """
 
 
+class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser,)
+    serializer_class = CategorySerializer
+    pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CategoryCreateSerializer
+        elif self.action == 'update':
+            return CategoryUpdateSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        return Category.objects.filter(is_active=True)
+
+
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     # queryset = Post.objects.all()
@@ -59,16 +75,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         author_username = self.request.query_params.get('author')
+        category_title = self.request.query_params.get('category')
         if author_username:
             author = get_user_model().objects.filter(username=author_username).first()
             if author:
                 return Post.objects.filter(author=author, is_active=True)
+        elif category_title:
+            category = Category.objects.filter(title=category_title).first()
+            if category:
+                return Post.objects.filter(category=category, is_active=True)
         # return Post.objects.all()
         return Post.objects.filter(is_active=True)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAdminUser]
+    permission_classes = (IsAdminUser,)
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
