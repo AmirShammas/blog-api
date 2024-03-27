@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 
 
 class PostSerializer(serializers.ModelSerializer):
+
+    comments = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
         fields = (
@@ -12,7 +15,13 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "body",
             "created_at",
+            "comments",
         )
+
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(post=obj)
+        serializer = CommentSerializer(comments, many=True)
+        return serializer.data
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
