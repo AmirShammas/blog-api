@@ -60,8 +60,9 @@ class PostViewSet(viewsets.ModelViewSet):
         if author_username:
             author = get_user_model().objects.filter(username=author_username).first()
             if author:
-                return Post.objects.filter(author=author)
-        return Post.objects.all()
+                return Post.objects.filter(author=author, is_active=True)
+        # return Post.objects.all()
+        return Post.objects.filter(is_active=True)
 
 
 class UserViewSet(viewsets.ModelViewSet):
