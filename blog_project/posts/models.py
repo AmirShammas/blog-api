@@ -26,7 +26,7 @@ class Post(models.Model):
     body = models.TextField(null=False, blank=False, verbose_name="Body")
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.PROTECT, related_name="posts", verbose_name="Author")
-    category = models.ForeignKey(Category, null=False, blank=False, default=1,
+    category = models.ForeignKey(Category, null=False, blank=False, default=4,
                                  on_delete=models.PROTECT, related_name="posts", verbose_name="Category")
     is_active = models.BooleanField(default=False, verbose_name="Is Active")
     created_at = models.DateTimeField(
