@@ -3,7 +3,7 @@ from .models import Category, Comment, Post
 from .serializers import CategoryCreateSerializer, CategorySerializer, CategoryUpdateSerializer, CommentCreateSerializer, CommentSerializer, CommentUpdateSerializer, PostCreateSerializer, PostSerializer, PostUpdateSerializer, UserSerializer
 from .permissions import IsAuthorOrReadOnly
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAdminUser
 from .pagination import CustomPagination
 
@@ -37,6 +37,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminUser,)
     serializer_class = CategorySerializer
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title',]
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -54,6 +56,8 @@ class PostViewSet(viewsets.ModelViewSet):
     # queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'body']
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -98,6 +102,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     serializer_class = CommentSerializer
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title',]
 
     def get_serializer_class(self):
         if self.action == 'create':
