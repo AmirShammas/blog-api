@@ -2,14 +2,34 @@ from django.db import models
 from django.conf import settings
 
 
-class Category(models.Model):
+class MyBaseModel(models.Model):
+    is_active = models.BooleanField(
+        default=False,
+        verbose_name="Is Active",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Created At",
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Updated At",
+    )
+
+    class Meta:
+        abstract = True
+        ordering = ("pk",)
+
+    def __str__(self):
+        raise NotImplementedError("Implement __str__ method")
+
+
+class Category(MyBaseModel):
     title = models.CharField(max_length=50, null=False,
                              blank=False, verbose_name="Title")
     body = models.TextField(null=False, blank=False, verbose_name="Body")
-    is_active = models.BooleanField(default=False, verbose_name="Is Active")
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
 
     class Meta:
         verbose_name = "Category"
@@ -20,7 +40,7 @@ class Category(models.Model):
         return self.title
 
 
-class Post(models.Model):
+class Post(MyBaseModel):
     title = models.CharField(max_length=50, null=False,
                              blank=False, verbose_name="Title")
     body = models.TextField(null=False, blank=False, verbose_name="Body")
@@ -28,10 +48,6 @@ class Post(models.Model):
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.PROTECT, related_name="posts", verbose_name="Author")
     category = models.ForeignKey(Category, null=False, blank=False, default=4,
                                  on_delete=models.PROTECT, related_name="posts", verbose_name="Category")
-    is_active = models.BooleanField(default=False, verbose_name="Is Active")
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
 
     class Meta:
         verbose_name = "Post"
@@ -42,7 +58,7 @@ class Post(models.Model):
         return self.title
 
 
-class Comment(models.Model):
+class Comment(MyBaseModel):
     title = models.CharField(max_length=50, null=False,
                              blank=False, verbose_name="Title")
     body = models.TextField(null=False, blank=False, verbose_name="Body")
@@ -50,10 +66,6 @@ class Comment(models.Model):
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.PROTECT, related_name="comments", verbose_name="Author")
     post = models.ForeignKey(Post, null=False, blank=False,
                              on_delete=models.PROTECT, related_name="comments", verbose_name="Post")
-    is_active = models.BooleanField(default=False, verbose_name="Is Active")
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
 
     class Meta:
         verbose_name = "Comment"
